@@ -37,7 +37,7 @@
     - Changes in patch are for bugs fixing. Always backwards compatible
  */
 
-var version = 10.1.1;
+var version = '10.1.1';
 
 var calc = {data: {}};
 
@@ -103,12 +103,13 @@ calc.start = function (data)
         data.fuels = datasets.fuels;
 
     // Copy over any new fuels added in datasets to local assessment copy
-    // this does not overwrite any local changes   
+    // this does not overwrite any local changes
+    /*
     for (var fuel in datasets.fuels) {
         if (data.fuels[fuel] == undefined) {
             data.fuels[fuel] = datasets.fuels[fuel];
         }
-    }
+    }*/
 
     data.num_of_floors = 0;
     data.TFA = 0;
@@ -186,23 +187,20 @@ calc.floors = function (data)
  //--------------------------------------------------------------------------------------------*/
 
 calc.occupancy = function (data)
-{
-    if (data.use_custom_occupancy == undefined)
-        data.use_custom_occupancy = false;
-    if (data.custom_occupancy == undefined)
-        data.custom_occupancy = 1;
+{        
+    // SAP based occupancy calculation
     if (data.TFA > 13.9) {
         data.occupancy = 1 + 1.76 * (1 - Math.exp(-0.000349 * Math.pow((data.TFA - 13.9), 2))) + 0.0013 * (data.TFA - 13.9);
-    }
-    else {
+    } else {
         data.occupancy = 1;
     }
-
-    if (data.use_custom_occupancy)
-    {
-        data.occupancy = data.custom_occupancy;
+    
+    // Option to override with custom occupancy input
+    if (data.use_custom_occupancy!=undefined && data.use_custom_occupancy) {
+        if (data.custom_occupancy!=undefined) {
+            data.occupancy = data.custom_occupancy;
+        }
     }
-
     return data;
 }
 
@@ -304,30 +302,27 @@ calc.fabric = function (data, solar_acces_factor)
      };*/
     for (z in data.fabric.elements)
     {
-// Calculate heat loss through elements
+        data.fabric.elements[z].type = data.fabric.elements[z].type.toLowerCase();
+        
+        // Calculate heat loss through elements
 
-// Use element length and height if given rather than area.
-        if (data.fabric.elements[z]['l'] != undefined && data.fabric.elements[z]['l'] != '' && data.fabric.elements[z]['h'] != undefined && data.fabric.elements[z]['h'] != '')
-        {
+        // Use element length and height if given rather than area.
+        if (data.fabric.elements[z]['l'] != undefined && data.fabric.elements[z]['l'] != '' && data.fabric.elements[z]['h'] != undefined && data.fabric.elements[z]['h'] != '') {
             data.fabric.elements[z].area = data.fabric.elements[z]['l'] * data.fabric.elements[z]['h'];
         }
         data.fabric.elements[z].netarea = data.fabric.elements[z].area;
-        if (data.fabric.elements[z].type != 'window' && data.fabric.elements[z].type != 'Window' && data.fabric.elements[z].type != 'Door' && data.fabric.elements[z].type != 'Roof_light' && data.fabric.elements[z].type != 'Hatch') {
+        if (['window','door','roof_light','hatch'].includes(data.fabric.elements[z].type)==false) {
             data.fabric.elements[z].windowarea = 0;
         }
-
-// Subtract window areas:
-
+ 
+        // Subtract window areas:
         for (w in data.fabric.elements)
         {
-            if (data.fabric.elements[w].type == 'window' || data.fabric.elements[w].type == 'Window' || data.fabric.elements[w].type == 'Door' || data.fabric.elements[w].type == 'Roof_light' || data.fabric.elements[w].type == 'Hatch')
-            {
-//if (data.fabric.elements[w].subtractfrom != undefined && data.fabric.elements[w].subtractfrom == z)
+            if (['window','door','roof_light','hatch'].includes(data.fabric.elements[w].type.toLowerCase())) {
                 if (data.fabric.elements[w].subtractfrom != undefined && data.fabric.elements[w].subtractfrom == data.fabric.elements[z].id)
                 {
                     var windowarea = data.fabric.elements[w].area;
-                    if (data.fabric.elements[w]['l'] != undefined && data.fabric.elements[w]['l'] != '' && data.fabric.elements[w]['h'] != undefined && data.fabric.elements[w]['h'] != '')
-                    {
+                    if (data.fabric.elements[w]['l'] != undefined && data.fabric.elements[w]['l'] != '' && data.fabric.elements[w]['h'] != undefined && data.fabric.elements[w]['h'] != '') {
                         windowarea = data.fabric.elements[w]['l'] * data.fabric.elements[w]['h'];
                     }
                     data.fabric.elements[z].windowarea += windowarea;
@@ -336,47 +331,47 @@ calc.fabric = function (data, solar_acces_factor)
             }
         }
 
-        if (data.fabric.elements[z].type == 'window' || data.fabric.elements[z].type == 'Window' || data.fabric.elements[z].type == 'Roof_light')
-            data.fabric.elements[z].wk = data.fabric.elements[z].netarea * (1 / (1 / data.fabric.elements[z].uvalue + 0.04)); // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
-        else
+        if (['window','roof_light'].includes(data.fabric.elements[z].type)) {
+            // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
+            data.fabric.elements[z].wk = data.fabric.elements[z].netarea * (1 / (1 / data.fabric.elements[z].uvalue + 0.04)); 
+        } else {
             data.fabric.elements[z].wk = data.fabric.elements[z].netarea * data.fabric.elements[z].uvalue;
+        }
         data.fabric.total_heat_loss_WK += data.fabric.elements[z].wk;
+        
         // By checking that the u-value is not 0 = internal walls we can calculate total external area
-        //if (data.fabric.elements[z].uvalue != 0 && data.fabric.elements[z].netarea != undefined) {
-        if (data.fabric.elements[z].uvalue != 0 && data.fabric.elements[z].type != 'party_wall' && data.fabric.elements[z].type != 'Party_wall') {
-            if (data.fabric.elements[z].netarea == undefined)
-                data.fabric.elements[z].netarea = 0;
+        if (data.fabric.elements[z].uvalue != 0 && data.fabric.elements[z].type != 'party_wall') {
+            if (data.fabric.elements[z].netarea == undefined) data.fabric.elements[z].netarea = 0;
             data.fabric.total_external_area += data.fabric.elements[z].netarea;
         }
 
-
-        if (data.fabric.elements[z].type == 'floor' || data.fabric.elements[z].type == 'Floor') {
+        if (data.fabric.elements[z].type == 'floor') {
             data.fabric.total_floor_WK += data.fabric.elements[z].wk;
             data.fabric.total_floor_area += data.fabric.elements[z].netarea;
         }
-        if (data.fabric.elements[z].type == 'wall' || data.fabric.elements[z].type == 'Wall') {
+        else if (data.fabric.elements[z].type == 'wall') {
             data.fabric.total_wall_WK += data.fabric.elements[z].wk;
             data.fabric.total_wall_area += data.fabric.elements[z].netarea;
         }
-        if (data.fabric.elements[z].type == 'roof' || data.fabric.elements[z].type == 'Roof' || data.fabric.elements[z].type == 'Loft') {
+        else if (['roof','loft'].includes(data.fabric.elements[z].type)) {
             data.fabric.total_roof_WK += data.fabric.elements[z].wk;
             data.fabric.total_roof_area += data.fabric.elements[z].netarea;
         }
-        if (data.fabric.elements[z].type == 'window' || data.fabric.elements[z].type == 'Window' || data.fabric.elements[z].type == 'Door' || data.fabric.elements[z].type == 'Roof_light' || data.fabric.elements[z].type == 'Hatch') {
+        else if (['window','door','roof_light','hatch'].includes(data.fabric.elements[z].type)) {
             data.fabric.total_window_WK += data.fabric.elements[z].wk;
             data.fabric.total_window_area += data.fabric.elements[z].netarea;
         }
-        if (data.fabric.elements[z].type == 'party_wall' || data.fabric.elements[z].type == 'Party_wall') {
+        else if (data.fabric.elements[z].type == 'party_wall') {
             data.fabric.total_party_wall_WK += data.fabric.elements[z].wk;
             data.fabric.total_party_wall_area += data.fabric.elements[z].netarea;
         }
 
-// Calculate total thermal capacity
+        // Calculate total thermal capacity
         if (data.fabric.elements[z].kvalue != undefined) {
             data.fabric.total_thermal_capacity += data.fabric.elements[z].kvalue * data.fabric.elements[z].area;
         }
 
-        if (data.fabric.elements[z].type == 'window' || data.fabric.elements[z].type == 'Window' || data.fabric.elements[z].type == 'Door' || data.fabric.elements[z].type == 'Roof_light')
+        if (['window','door','roof_light'].includes(data.fabric.elements[z].type))
         {
             var orientation = data.fabric.elements[z]['orientation'] != '' ? data.fabric.elements[z]['orientation'] : 0; // For a reason that i haven't been able to find when it is zero, orientation = data.fabric.elements[z]['orientation'] becomes an empty string
             //var orientation = data.fabric.elements[z]['orientation'];
@@ -449,7 +444,6 @@ calc.fabric = function (data, solar_acces_factor)
  //      - data.ventilation.IVF
  //      - data.ventilation.EVP
  //      - data.ventilation.dwelling_construction
- //      - data.ventilation.suspended_wooden_floor
  //      - data.ventilation.suspended_wooden_floor
  //      - data.ventilation.draught_lobby
  //      - data.ventilation.percentage_draught_proofed
@@ -1136,8 +1130,8 @@ calc.heating_systems = function (data) {
                     if (data.energy_requirements.space_heating == undefined)
                         data.energy_requirements.space_heating = {quantity: 0};
                     var Q_space = system.fraction_space * data.energy_requirements.space_heating.quantity;
-                    var n_winter = system.summer_efficiency / 100;
-                    var n_summer = system.winter_efficiency / 100;
+                    var n_summer = system.summer_efficiency / 100;
+                    var n_winter = system.winter_efficiency / 100;
                     system.efficiency = (Q_water + Q_space) / ((Q_space / n_winter) + (Q_water / n_summer));
                     break;
             }
@@ -1208,7 +1202,7 @@ calc.heating_systems = function (data) {
 calc.fuel_requirements = function (data) {
 
     // Fuel totals
-    data.fuel_totals = {}; // remove this line when we get rif of energy_systems
+    data.fuel_totals = {}; // remove this line when we get rid of energy_systems
     for (z in data.fuel_requirements)
     {
         for (x in data.fuel_requirements[z].list)
@@ -1503,10 +1497,16 @@ calc.LAC_SAP = function (data) {
         GC_monthly[m] = GC;
     // CO2 emissions in kg/m2/year associated with cooking
     var cooking_CO2 = (119 + 24 * data.occupancy) / data.TFA;
-    if (data.fuels['Standard Tariff'] !== undefined)
-        data.LAC.EC = cooking_CO2 * data.TFA / data.fuels['Standard Tariff'].co2factor; // We stimate the clculation of annual energy use from the emissions
-    else
-        data.LAC.EC = cooking_CO2 * data.TFA / 0.519; // We stimate the clculation of annual energy use from the emissions
+    
+    // This results in very high cooking energy use if co2factor of Standard Tariff is very low...
+    // if (data.fuels['Standard Tariff'] !== undefined)
+    //     data.LAC.EC = cooking_CO2 * data.TFA / data.fuels['Standard Tariff'].co2factor; // We stimate the clculation of annual energy use from the emissions
+    // else
+    
+    // We stimate the clculation of annual energy use from the emissions
+    // To fix: is there a better way without the CO2 proxy?
+    data.LAC.EC = cooking_CO2 * data.TFA / 0.519; 
+    
     for (m = 0; m < 12; m++)
         data.LAC.EC_monthly = data.LAC.EC / 12;
     if (GC > 0 && data.LAC_calculation_type == 'SAP') {
@@ -2060,50 +2060,61 @@ calc.applianceCarbonCoop = function (data) {
  //---------------------------------------------------------------------------------------------*/
 
 calc.appliancelist = function (data) {
-    //data.appliancelist={};
+
     if (data.appliancelist == undefined)
-        data.appliancelist = {list: [{name: "LED Light", power: 6, hours: 12, category: 'lighting', fuel: 'Standard Tariff', efficiency: 1}]};
-    if (data.appliancelist.lighting == undefined)
-        data.appliancelist.lighting = {};
-    if (data.appliancelist.cooking == undefined)
-        data.appliancelist.cooking = {};
-    if (data.appliancelist.appliances == undefined)
-        data.appliancelist.appliances = {};
-    data.appliancelist.lighting.totalwh = 0;
-    data.appliancelist.lighting.total_fuel_input = 0;
-    data.appliancelist.lighting.monthlykwh = [];
-    data.appliancelist.lighting.gains_W_monthly = [];
-    data.appliancelist.cooking.totalwh = 0;
-    data.appliancelist.cooking.total_fuel_input = 0;
-    data.appliancelist.cooking.monthlykwh = [];
-    data.appliancelist.cooking.gains_W_monthly = [];
-    data.appliancelist.appliances.totalwh = 0;
-    data.appliancelist.appliances.total_fuel_input = 0;
-    data.appliancelist.appliances.monthlykwh = [];
-    data.appliancelist.appliances.gains_W_monthly = [];
+        data.appliancelist = {list: [{name: "LED Light", power: 6, hours: 12, kwhd: 0, kwhy:0, category: 'lighting', fuel: 'Standard Tariff', efficiency: 1}]};
+        
+    
+    data.appliancelist.lighting = {total_kwh:0, total_fuel_kwh:0, monthly_kwh:[], gains_W_monthly:[]}
+    data.appliancelist.cooking = {total_kwh:0, total_fuel_kwh:0, monthly_kwh:[], gains_W_monthly:[]}
+    data.appliancelist.appliances = {total_kwh:0, total_fuel_kwh:0, monthly_kwh:[], gains_W_monthly:[]}
+    
     for (z in data.appliancelist.list) {
-        if (data.appliancelist.list[z].category != undefined)
-            var category = data.appliancelist.list[z].category;
-        else
-            var category = 'appliances';
-        data.appliancelist.list[z].energy = data.appliancelist.list[z].power * data.appliancelist.list[z].hours;
-        data.appliancelist.list[z].fuel_input = data.appliancelist.list[z].energy / data.appliancelist.list[z].efficiency;
-        data.appliancelist[category].totalwh += data.appliancelist.list[z].energy;
-        data.appliancelist[category].total_fuel_input += data.appliancelist.list[z].fuel_input;
+        var item = data.appliancelist.list[z];
+        
+        var category = 'appliances';
+        if (item.category != undefined) category = item.category;
+        
+        if (item.power!=undefined && item.power>0 && item.hours!=undefined && item.hours>0) {
+            item.kwhd = (item.power * item.hours) * 0.001;
+            item.kwhy = item.kwhd * 365.0;
+        } else if (item.kwhd!=undefined && item.kwhd>0) {
+            item.kwhy = item.kwhd * 365.0;
+        } else if (item.kwhy!=undefined && item.kwhy>0) {
+            // already in final format
+        }
+        
+        item.fuel_input = item.kwhy / item.efficiency;
+        data.appliancelist[category].total_kwh += item.kwhy;
+        data.appliancelist[category].total_fuel_kwh += item.fuel_input;
     }
 
-    for (category in {'lighting': '', 'appliances': '', 'cooking': ''}) {
-        data.appliancelist[category].annualkwh = data.appliancelist[category].totalwh * 365 * 0.001;
-        data.appliancelist[category].annual_fuel_input_kwh = data.appliancelist[category].total_fuel_input * 365 * 0.001;
-        for (m = 0; m < 12; m++)
-            data.appliancelist[category].monthlykwh[m] = data.appliancelist[category].annualkwh * datasets.table_1a[m] / 365;
-        data.appliancelist[category].gains_W = data.appliancelist[category].totalwh / 24.0;
-        for (var m = 0; m < 12; m++)
+    for (var category in {'lighting': '', 'appliances': '', 'cooking': ''}) {
+        // Calculate monthly kwh
+        for (var m = 0; m < 12; m++) {
+            data.appliancelist[category].monthly_kwh[m] = data.appliancelist[category].total_kwh * datasets.table_1a[m] / 365.0;
+        }
+        // Average continuous gain
+        data.appliancelist[category].gains_W = (data.appliancelist[category].total_kwh / 365.0) / 0.024;
+        // Monthly gains is the same
+        for (var m = 0; m < 12; m++) {
             data.appliancelist[category].gains_W_monthly[m] = data.appliancelist[category].gains_W;
+        }
+        
+        // If we are using the detailedlist LAC source, copy gains and energy requirements
         if (data.LAC_calculation_type == 'detailedlist') {
-            data.gains_W[category.charAt(0).toUpperCase() + category.slice(1)] = data.appliancelist[category].gains_W_monthly;
-            if (data.appliancelist[category].annualkwh > 0)
-                data.energy_requirements[category] = {name: category.charAt(0).toUpperCase() + category.slice(1), quantity: data.appliancelist[category].annualkwh, monthly: data.appliancelist[category].monthlykwh};
+            // First character needs to be upper case
+            var uc_first_cat = category.charAt(0).toUpperCase() + category.slice(1)
+            // Copy over gains
+            data.gains_W[uc_first_cat] = data.appliancelist[category].gains_W_monthly;
+            // Copy over energy requirements
+            if (data.appliancelist[category].total_kwh > 0) {
+                data.energy_requirements[category] = {
+                    name: uc_first_cat, 
+                    quantity: data.appliancelist[category].total_kwh, 
+                    monthly: data.appliancelist[category].monthly_kwh
+                }
+            }
         }
     }
 
@@ -2114,9 +2125,9 @@ calc.appliancelist = function (data) {
         data.appliancelist.list.forEach(function (item) {
             if (f_requirements[item.category][item.fuel] == undefined)
                 f_requirements[item.category][item.fuel] = {demand: 0, fraction: 0, fuel: item.fuel, system_efficiency: item.efficiency, fuel_input: 0};
-            f_requirements[item.category][item.fuel].demand += 365 * item.energy / 1000;
-            f_requirements[item.category][item.fuel].fuel_input += 365 * item.fuel_input / 1000;
-            fuel_input_total[item.category] += 365 * item.fuel_input / 1000;
+            f_requirements[item.category][item.fuel].demand += item.kwhy
+            f_requirements[item.category][item.fuel].fuel_input += item.fuel_input
+            fuel_input_total[item.category] += item.fuel
         });
         // Add fractions
         for (category in {appliances: {}, cooking: {}, lighting: {}}) {

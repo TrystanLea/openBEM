@@ -18,7 +18,7 @@ var datasets = {
     *   USA data by  michaelsuhl11 - https://community.openenergymonitor.org/u/michaelsuhl11/summary
     *****************************************************************************************************/
     fuels: {
-        'Mains Gas': {category: 'Gas', standingcharge: 101, fuelcost: 4.25, co2factor: 0.222, primaryenergyfactor: 1.28, SAP_code: 1},
+        /*'Mains Gas': {category: 'Gas', standingcharge: 101, fuelcost: 4.25, co2factor: 0.222, primaryenergyfactor: 1.28, SAP_code: 1},
         'Bulk LPG': {category: 'Gas', standingcharge: 70, fuelcost: 8.46, co2factor: 0.242, primaryenergyfactor: 1.166, SAP_code: 2},
         'Bottled LPG ': {category: 'Gas', standingcharge: 0, fuelcost: 10.61, co2factor: 0.242, primaryenergyfactor: 1.166, SAP_code: 3},
         'Heating Oil': {category: 'Oil', standingcharge: 0, fuelcost: 5.43, co2factor: 0.298, primaryenergyfactor: 1.189, SAP_code: 4},
@@ -34,10 +34,10 @@ var datasets = {
         '7 Hour tariff - Low Rate': {category: 'Electricity', standingcharge: 0, fuelcost: 6.67, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 31},
         '10-hour tariff - High Rate': {category: 'Electricity', standingcharge: 77, fuelcost: 17.1, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 34},
         '10-hour tariff - Low Rate': {category: 'Electricity', standingcharge: 0, fuelcost: 9.25, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 33},
-        '24-hour heating tariff': {category: 'Electricity', standingcharge: 40, fuelcost: 7.75, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 35},
+        '24-hour heating tariff': {category: 'Electricity', standingcharge: 40, fuelcost: 7.75, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 35},*/
         // Do not remove the following fuels from the datasets, they are required by the model
-        'Standard Tariff': {category: 'Electricity', standingcharge: 66, fuelcost: 15.06, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 30},
-        'generation': {category: 'generation', standingcharge: 0, fuelcost: 15.06, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 0}
+        'Standard Tariff': {category: 'Electricity', standingcharge: 66, fuelcost: 15.06, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 30}
+        //'generation': {category: 'generation', standingcharge: 0, fuelcost: 15.06, co2factor: 0.381, primaryenergyfactor: 3.28, SAP_code: 0}
     },
     
     
