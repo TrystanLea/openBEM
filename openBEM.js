@@ -190,10 +190,12 @@ calc.occupancy = function (data)
 {        
     // SAP based occupancy calculation
     if (data.TFA > 13.9) {
-        data.occupancy = 1 + 1.76 * (1 - Math.exp(-0.000349 * Math.pow((data.TFA - 13.9), 2))) + 0.0013 * (data.TFA - 13.9);
+        data.sap_occupancy = 1 + 1.76 * (1 - Math.exp(-0.000349 * Math.pow((data.TFA - 13.9), 2))) + 0.0013 * (data.TFA - 13.9);
     } else {
-        data.occupancy = 1;
+        data.sap_occupancy = 1;
     }
+    
+    data.occupancy = data.sap_occupancy
     
     // Option to override with custom occupancy input
     if (data.use_custom_occupancy!=undefined && data.use_custom_occupancy) {
@@ -1737,6 +1739,9 @@ calc.water_heating = function (data) {
     total_distribution_loss = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     total_primary_circuit_loss = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     total_combi_loss = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    
+    // Flag to detect whether to show hot water storage section
+    data.water_heating.all_instantaneous = true;
 
     data.heating_systems.forEach(function (system) {
         if ((system.provides == 'water' || system.provides == "heating_and_water") && system.fraction_water_heating > 0) {
@@ -1745,6 +1750,9 @@ calc.water_heating = function (data) {
                     total_heat_required[m] += 0.85 * system.fraction_water_heating * monthly_energy_content[m];
             }
             else {
+                // If there is one system that has a hot water storage component, then show hot water storage section
+                data.water_heating.all_instantaneous = false;
+                 
                 var distribution_loss = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 var primary_circuit_loss = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 var combi_loss = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
