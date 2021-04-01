@@ -485,5 +485,15 @@ var datasets = {
             ['G',14],['GL',5],['GU',1],['GU11-12',3],['GU14',3],['GU28-29',2],['GU30-35',3],['GU46',3],['GU51-52',3],['HA',1],['HD',11],['HG',10],['HP',1],['HR',6],['HS',18],['HU',11],['HX',11],['IG',12],['IP',12],['IV',17],['IV30-32',16],['IV36',16],['KA',14],['KT',1],['KW',17],['KW15-17',19],['KY',15],['L',7],['LA',7],['LA7-23',8],['LD',13],['LE',6],['LL',7],['LL23-27',13],['LL30-78',13],['LN',11],['LS',11],['LS24',10],['LU',1],['M',7],['ME',2],['MK',1],['ML',14],
             ['N',1],['NE',9],['NG',11],['NN',6],['NP',5],['NP8',13],['NR',12],['NW',1],['OL',7],['OX',1],['PA',14],['PE',12],['PE9-12',11],['PE20-25',11],['PH',15],['PH19-25',17],['PH26',16],['PH30-40',17],['PH4-509',14],['PL',4],['PO',3],['PO18-22',2],['PR',7],['RG',1],['RG21-29',],['RH',1],['RH10-20',2],['RM',12],['S',11],['S18',6],['S32-33',6],['S40-45',6],['SA',5],['SA14-20',13],['SA31-48',13],['SA61-73',13],['SE',1],['SG',1],['SK',7],['SK13',6],['SK17',6],['SK22-23',6],
             ['SL',1],['SM',1],['SN',5],['SN7',1],['SO',3],['SP',5],['SP6-11',3],['SR',9],['SR7-8',10],['SS',12],['ST',6],['SW',1],['SY',6],['SY14',7],['SY15-25',13],['TA',5],['TD',9],['TD12',9],['TD15',9],['TF',6],['TN',2],['TQ',4],['TR',4],['TS',10],['TW',1],['UB',1],['W',1],['WA',7],['WC',1],['WD',1],['WF',11],['WN',7],['WR',6],['WS',6],['WV',6],['YO',10],['YO15-16',11],['YO25',11],['ZE',20]
-        ]
+        ],
+        
+        ventilation_types: {
+            "NV":"Natural ventilation",
+            "IE":"Intermittent extraction",
+            "PS":"Positive input ventilation from loft",
+            "DEV":"Whole house extract ventilation",
+            "MEV":"Positive input ventilation from outside",
+            "MV":"Balanced mechanical ventilation without heat recovery",
+            "MVHR":"Balanced mechanical ventilation with heat recovery"
+        }
 };
