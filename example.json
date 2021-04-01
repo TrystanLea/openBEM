@@ -1,5 +1,5 @@
 {
-    "region": 13,
+    "region": 5,
     "altitude": 114,
     "floors": [
         {
@@ -19,43 +19,53 @@
         "thermal_bridging_yvalue": 0.15,
         "global_TMP": 1,
         "global_TMP_value": 450,
+        
+        "library": {
+            "Stone wall": {"type":"wall", "uvalue":1.3, "kvalue":150},
+            "Party wall": {"type":"party_wall", "uvalue":0.0, "kvalue":150},
+            "Insulated floor": {"type":"floor", "uvalue":0.38, "kvalue":110},
+            "Solid floor": {"type":"floor", "uvalue":0.9, "kvalue":110},
+            "Insulated loft": {"type":"loft", "uvalue":0.18, "kvalue":9},
+            "Double Glazing": {"type":"window", "uvalue":3.1, "kvalue":0, "g":0.76, "gL":0.8, "ff":0.7}
+        },
+        
         "elements": [
-            {"id":1, "name":"E1", "type":"Wall", "l":3.36, "h":2.4, "uvalue":1.7, "kvalue":150 },
-            {"id":3, "name":"E3", "type":"Wall", "l":1.6, "h":2.4, "uvalue":1.7, "kvalue":150 },
-            {"id":7, "name":"E4", "type":"Wall", "l":3.02, "h":2.45, "uvalue":1.7, "kvalue":150 },
-            {"id":10, "name":"E5", "type":"Wall", "l":2.4, "h":2.45, "uvalue":1.7, "kvalue":150 },
-            {"id":11, "name":"E8", "type":"Wall", "l":1, "h":2.45, "uvalue":1.7, "kvalue":150 },
-            {"id":17, "name":"E9", "type":"Wall", "l":2.6, "h":2.42, "uvalue":1.7, "kvalue":150 },
-            {"id":18, "name":"E12", "type":"Wall", "l":1.6, "h":2.42, "uvalue":1.7, "kvalue":150 },
-            {"id":19, "name":"E13", "type":"Wall", "l":3.3, "h":2.42, "uvalue":1.7, "kvalue":150 },
-            {"id":20, "name":"E14", "type":"Wall", "l":2.39, "h":2.42, "uvalue":1.7, "kvalue":150 },
-            {"id":21, "name":"E18", "type":"Wall", "l":1.82, "h":2.42, "uvalue":1.7, "kvalue":150 },
+            {"id":"E1", "lib":"Stone wall", "l":3.36, "h":2.4 },
+            {"id":"E3", "lib":"Stone wall", "l":1.6, "h":2.4 },
+            {"id":"E4", "lib":"Stone wall", "l":3.02, "h":2.45 },
+            {"id":"E5", "lib":"Stone wall", "l":2.4, "h":2.45 },
+            {"id":"E8", "lib":"Stone wall", "l":1, "h":2.45 },
+            {"id":"E9", "lib":"Stone wall", "l":2.6, "h":2.42 },
+            {"id":"E12", "lib":"Stone wall", "l":1.6, "h":2.42 },
+            {"id":"E13", "lib":"Stone wall", "l":3.3, "h":2.42 },
+            {"id":"E14", "lib":"Stone wall", "l":2.39, "h":2.42 },
+            {"id":"E18", "lib":"Stone wall", "l":1.82, "h":2.42 },
 
-            {"id":2, "name":"E2", "type":"Party_wall", "l":6.81, "h":2.4, "uvalue":0, "kvalue":150 },
-            {"id":12, "name":"E6", "type":"Party_wall", "l":3.02, "h":2.45, "uvalue":0, "kvalue":150 },        
-            {"id":22, "name":"E7", "type":"Party_wall", "l":7.92, "h":2.45, "uvalue":0, "kvalue":150 },
-            {"id":23, "name":"E10", "type":"Party_wall", "l":3.17, "h":2.42, "uvalue":0, "kvalue":150 },
-            {"id":30, "name":"E11", "type":"Party_wall", "l":3.48, "h":2.42, "uvalue":0, "kvalue":150 },
-            {"id":31, "name":"E15", "type":"Party_wall", "l":3.3, "h":2.42, "uvalue":0, "kvalue":150 },
-            {"id":32, "name":"E16", "type":"Party_wall", "l":4.4, "h":2.42, "uvalue":0, "kvalue":150 },
-            {"id":33, "name":"E17", "type":"Party_wall", "l":2.24, "h":2.42, "uvalue":0, "kvalue":150 },
+            {"id":"E2", "lib":"Party wall", "l":6.81, "h":2.4 },
+            {"id":"E6", "lib":"Party wall", "l":3.02, "h":2.45 },        
+            {"id":"E7", "lib":"Party wall", "l":7.92, "h":2.45 },
+            {"id":"E10", "lib":"Party wall", "l":3.17, "h":2.42 },
+            {"id":"E11", "lib":"Party wall", "l":3.48, "h":2.42 },
+            {"id":"E15", "lib":"Party wall", "l":3.3, "h":2.42 },
+            {"id":"E16", "lib":"Party wall", "l":4.4, "h":2.42 },
+            {"id":"E17", "lib":"Party wall", "l":2.24, "h":2.42 },
 
-            {"id":6, "name":"Livingroom", "type":"Floor", "l":0, "h":0, "perimeter": 6.8, "area": 24.4, "uvalue":0.38, "kvalue":110 },
-            {"id":9, "name":"Kitchen", "type":"Floor", "l":0, "h":0, "perimeter": 5.42, "area": 7.248, "uvalue":0.9, "kvalue":110 },
-            {"id":14, "name":"Hall", "type":"Floor", "l":0, "h":0, "perimeter": 7.92, "area": 7.92, "uvalue":0.9, "kvalue":110 },
+            {"id":"FL", "lib":"Insulated floor", "l":0, "h":0, "perimeter": 6.8, "area": 24.4 },
+            {"id":"FK", "lib":"Solid floor", "l":0, "h":0, "perimeter": 5.42, "area": 7.248 },
+            {"id":"FH", "lib":"Solid floor", "l":0, "h":0, "perimeter": 7.92, "area": 7.92 },
             
-            {"id":34, "name":"Main Loft", "type":"Loft", "l":6.8, "h":4.4, "uvalue":0.18, "kvalue":9 },
-            {"id":35, "name":"Bathroom Loft", "type":"Loft", "l":3.3, "h":2.4, "uvalue":0.18, "kvalue":9 },
+            {"id":"LM", "lib":"Insulated loft", "l":6.8, "h":4.4 },
+            {"id":"LB", "lib":"Insulated loft", "l":3.3, "h":2.4 },
 
-            {"id":4, "name":"W1", "type":"Window", "l":1.76, "h":1.63, "uvalue":3.1, "kvalue":0, "orientation":4, "overshading":3, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":1 },
-            {"id":5, "name":"W2", "type":"Window", "l":1, "h":1.5, "uvalue":3.1, "kvalue":0, "orientation":0, "overshading":1, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":3 },
-            {"id":8, "name":"W3", "type":"Window", "l":0.91, "h":1.3, "uvalue":3.1, "kvalue":0, "orientation":2, "overshading":1, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":7 },
-            {"id":15, "name":"W4", "type":"Window", "l":0.79, "h":1.4, "uvalue":3.1, "kvalue":0, "orientation":4, "overshading":3, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":21 },
-            {"id":16, "name":"W5", "type":"Window", "l":0.9, "h":1.35, "uvalue":3.1, "kvalue":0, "orientation":4, "overshading":3, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":17 },
-            {"id":24, "name":"W6", "type":"Window", "l":0.9, "h":1.3, "uvalue":3.1, "kvalue":0, "orientation":0, "overshading":2, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":18 },
-            {"id":25, "name":"W7", "type":"Window", "l":0.84, "h":0.89, "uvalue":3.1, "kvalue":0, "orientation":0, "overshading":2, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":18 },
-            {"id":26, "name":"D1", "type":"Window", "l":0.9, "h":1.9, "uvalue":3.1, "kvalue":0, "orientation":2, "overshading":1, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":7 },
-            {"id":27, "name":"D2", "type":"Window", "l":0.9, "h":1.9, "uvalue":3.1, "kvalue":0, "orientation":4, "overshading":3, "g":0.76, "gL":0.8, "ff":0.7, "subtractfrom":11 }
+            {"id":"W1", "lib":"Double Glazing", "l":1.76, "h":1.63, "orientation":4, "overshading":3, "subtractfrom":"E1" },
+            {"id":"W2", "lib":"Double Glazing", "l":1, "h":1.5, "orientation":0, "overshading":1, "subtractfrom":"E3" },
+            {"id":"W3", "lib":"Double Glazing", "l":0.91, "h":1.3, "orientation":2, "overshading":1, "subtractfrom":"E4" },
+            {"id":"W4", "lib":"Double Glazing", "l":0.79, "h":1.4, "orientation":4, "overshading":3, "subtractfrom":"E18" },
+            {"id":"W5", "lib":"Double Glazing", "l":0.9, "h":1.35, "orientation":4, "overshading":3, "subtractfrom":"E9" },
+            {"id":"W6", "lib":"Double Glazing", "l":0.9, "h":1.3, "orientation":0, "overshading":2, "subtractfrom":"E12" },
+            {"id":"W7", "lib":"Double Glazing", "l":0.84, "h":0.89, "orientation":0, "overshading":2, "subtractfrom":"E12" },
+            {"id":"D1", "lib":"Double Glazing", "l":0.9, "h":1.9, "orientation":2, "overshading":1, "subtractfrom":"E4" },
+            {"id":"D2", "lib":"Double Glazing", "l":0.9, "h":1.9, "orientation":4, "overshading":3, "subtractfrom":"E8" }
         ]
     },
     "ventilation": {
@@ -69,6 +79,7 @@
         "air_permeability_value": 0,
         "system_air_change_rate":0,
         "balanced_heat_recovery_efficiency":0,
+        "system_specific_fan_power":3,
         "IVF": [
             {
                 "name": "Wood Burning Stove with Flue",
@@ -83,9 +94,9 @@
         ]
     },
     "temperature": {
-        "target":21,
-        "living_area":24.4,
-        "hours_off": {"weekday": [7, 8], "weekend": [8]}
+        "target":19.2,
+        "living_area":70,
+        "hours_off": {"weekday": [8], "weekend": [8]}
     },
     "space_heating": {
         "use_utilfactor_forgains":true,
@@ -93,25 +104,34 @@
     },
     "heating_systems": [
         {
-            "provides":"heating_and_water", 
-            "main_space_heating_system": true, 
+            "name":"Heat pump",
+            "provides":"heating_and_water",
+            "instantaneous_water_heating":false,
+            "main_space_heating_system": "mainHS1", 
             "fraction_water_heating": 1.0, 
             "fraction_space": 1.0,
-            "summer_efficiency": 350,
-            "winter_efficiency": 400,
+            "summer_efficiency": 380,
+            "winter_efficiency": 420,
             "fuel": "Standard Tariff",
             "responsiveness":1,
-            "heating_controls":1,
-            "temperature_adjustment":0
+            "heating_controls":2,
+            "temperature_adjustment":0,
+            "primary_circuit_loss":true,
+            "central_heating_pump":95.0,
+            "central_heating_pump_inside":true,
+            "warm_air_system":false,           
+            "fans_and_supply_pumps":0,
+            "sfp":0,
+            "combi_loss":0
         }
     ],
     "fuels": {
         "Standard Tariff": {
             "category": "Electricity", 
-            "standingcharge": 66, 
-            "fuelcost": 15.06, 
-            "co2factor": 0.381, 
-            "primaryenergyfactor": 3.28
+            "standingcharge": 76.65, 
+            "fuelcost": 10.9, 
+            "co2factor": 0.192, 
+            "primaryenergyfactor": 1.47
         },
         "generation": {
             "category": "Electricity", 
@@ -122,7 +142,7 @@
         }
     },
     
-    "LAC_calculation_type":"SAP",
+    "LAC_calculation_type":"detailedlist",
     "LAC": {
         "L": 16,
         "LLE": 16,
@@ -133,39 +153,23 @@
         "fuels_cooking": [{"fuel": "Standard Tariff", "fraction": 1}],
         "fuels_appliances": [{"fuel": "Standard Tariff", "fraction": 1}]
     },
-    "LAC_calculation_type": "detailedlist",
     "appliancelist": {
         "list": [
-            {
-                "category": "lighting",
-                "name": "LED Light", 
-                "power": 6, 
-                "hours": 12,
-                "kwhd": 0,
-                "kwhy": 0,
-                "fuel": "Standard Tariff", 
-                "efficiency": 1
-            },
-            {
-                "category": "cooking",
-                "name": "Cooker", 
-                "power": 0, 
-                "hours": 0,
-                "kwhd": 1.0,
-                "kwhy": 0,
-                "fuel": "Standard Tariff", 
-                "efficiency": 1
-            },
-            {
-                "category": "appliances",
-                "name": "Laptop", 
-                "power": 0, 
-                "hours": 0,
-                "kwhd": 0,
-                "kwhy": 365,
-                "fuel": "Standard Tariff", 
-                "efficiency": 1
-            }
+            { "category": "lighting", "name": "Livingroom", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "lighting", "name": "Diningroom", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "lighting", "name": "Kitchen", "power": 24, "hours": 4, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "lighting", "name": "Bathroom", "power": 24, "hours": 3, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },    
+            { "category": "lighting", "name": "Bed 1", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "lighting", "name": "Bed 2", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "lighting", "name": "Study", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "cooking", "name": "Cooker", "power": 900, "hours": 2, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "cooking", "name": "Kettle", "power": 2800, "hours": 0.16, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "cooking", "name": "Microwave", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 72, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "cooking", "name": "Bread maker", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 9.5, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "appliances", "name": "Laptop 1", "power": 20, "hours": 12, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "appliances", "name": "Laptop 2", "power": 25, "hours": 5, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "appliances", "name": "Washing Machine", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 192, "fuel": "Standard Tariff", "efficiency": 100 },
+            { "category": "appliances", "name": "Fridge Freezer", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 208, "fuel": "Standard Tariff", "efficiency": 100 }
         ]
     },
     "SHW": {
@@ -177,18 +181,19 @@
         "inclination": 35,
         "overshading": 1.0,
         "combined_cylinder_volume":168,
-        "Vs": 60
+        "Vs": 60,
+        "pump":"electric"
     },
     "water_heating": {
-        "override_annual_energy_content":0,
+        "override_annual_energy_content":false,
         "annual_energy_content":0,
-        "low_water_use_design":false,
-        "hot_water_control_type": "no_cylinder_thermostat",
+        "low_water_use_design":true,
+        "hot_water_control_type": "Cylinder thermostat, water heating separately timed",
         "pipework_insulation": "Fully insulated primary pipework",
         "storage_type": {
-            "declared_loss_factor_known": false,
-            "manufacturer_loss_factor": 0,
-            "temperature_factor_a":0,
+            "declared_loss_factor_known": true,
+            "manufacturer_loss_factor": 0.84,
+            "temperature_factor_a":0.6,
             "storage_volume":160,
             "loss_factor_b":0.0181,
             "volume_factor_b":0.908,
