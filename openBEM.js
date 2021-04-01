@@ -264,6 +264,8 @@ calc.occupancy = function (data)
 
 calc.fabric = function (data, solar_acces_factor)
 {
+    if (data.fabric.library==undefined)
+        data.fabric.library = {}
     if (data.fabric == undefined)
         data.fabric = {};
     if (data.fabric.elements == undefined)
@@ -302,6 +304,19 @@ calc.fabric = function (data, solar_acces_factor)
      4:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
      5:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
      };*/
+    
+    // Apply element properties from library
+    if (data.fabric.library!=undefined) {
+        for (var z in data.fabric.elements) {
+            if (data.fabric.elements[z].lib!=undefined) {
+                if (data.fabric.library[data.fabric.elements[z].lib]!=undefined) {
+                    var lib = data.fabric.library[data.fabric.elements[z].lib]
+                    for (var p in lib) data.fabric.elements[z][p] = lib[p]
+                }
+            }
+        }
+    }
+    
     for (z in data.fabric.elements)
     {
         data.fabric.elements[z].type = data.fabric.elements[z].type.toLowerCase();
@@ -824,7 +839,7 @@ calc.temperature = function (data)
     var Te = [];
     for (var m = 0; m < 12; m++)
     {
-//Te[m] = datasets.table_u1[data.region][m] - (0.3 * data.altitude / 50);
+        // Te[m] = datasets.table_u1[data.region][m] - (0.3 * data.altitude / 50);
         Te[m] = datasets.table_u1[data.region][m];
     }
 
@@ -926,6 +941,20 @@ calc.temperature = function (data)
         data.internal_temperature[m] = data.internal_temperature[m] + data.temperature.temperature_adjustment;
     }
     data.mean_internal_temperature.m_i_t_whole_dwelling_adjusted = data.internal_temperature;
+    
+    // Calculate annual average temperatures for UI
+    data.annual_m_i_t_living_area = 0
+    data.annual_internal_temperature = 0
+    data.annual_external_temperature = 0
+    for (var m = 0; m < 12; m++) {
+        data.annual_m_i_t_living_area += data.mean_internal_temperature.m_i_t_living_area[m]
+        data.annual_internal_temperature += data.internal_temperature[m]
+        data.annual_external_temperature += data.external_temperature[m]
+    } 
+    data.annual_m_i_t_living_area /= 12
+    data.annual_internal_temperature /= 12
+    data.annual_external_temperature /= 12
+    
     return data;
 };
 
@@ -1742,6 +1771,7 @@ calc.water_heating = function (data) {
     
     // Flag to detect whether to show hot water storage section
     data.water_heating.all_instantaneous = true;
+    data.water_heating.primary_circuit_loss_flag = false;
 
     data.heating_systems.forEach(function (system) {
         if ((system.provides == 'water' || system.provides == "heating_and_water") && system.fraction_water_heating > 0) {
@@ -1762,7 +1792,9 @@ calc.water_heating = function (data) {
                     distribution_loss[m] = 0.15 * system.fraction_water_heating * monthly_energy_content[m];
 
                     // PRIMARY CIRCUIT LOSSES - SAP2012, table 3, p.199
-                    if (system.primary_circuit_loss == 'Yes') {
+                    if (system.primary_circuit_loss) {
+                        data.water_heating.primary_circuit_loss_flag = true;
+                        
                         var hours_per_day = 0;
                         if (m >= 5 && m <= 8) {
                             hours_per_day = 3;
@@ -2010,7 +2042,7 @@ calc.applianceCarbonCoop = function (data) {
         data.applianceCarbonCoop.list.forEach(function (item) {
             var category = item.category == 'Cooking' ? 'cooking' : 'appliances';
             if (f_requirements[category][item.fuel] == undefined)
-                f_requirements[category][item.fuel] = {demand: 0, fraction: 0, fuel: item.fuel, system_efficiency: item.efficiency, fuel_input: 0};
+                f_requirements[category][item.fuel] = {demand: 0, fraction: 0, fuel: item.fuel, system_efficiency: (item.efficiency/100), fuel_input: 0};
             f_requirements[category][item.fuel].demand += item.energy_demand;
             f_requirements[category][item.fuel].fuel_input += item.fuel_input;
             data.applianceCarbonCoop.fuel_input_total[category] += item.fuel_input;
@@ -2070,7 +2102,7 @@ calc.applianceCarbonCoop = function (data) {
 calc.appliancelist = function (data) {
 
     if (data.appliancelist == undefined)
-        data.appliancelist = {list: [{name: "LED Light", power: 6, hours: 12, kwhd: 0, kwhy:0, category: 'lighting', fuel: 'Standard Tariff', efficiency: 1}]};
+        data.appliancelist = {list: [{name: "LED Light", power: 6, hours: 12, kwhd: 0, kwhy:0, category: 'lighting', fuel: 'Standard Tariff', efficiency: 100}]};
         
     
     data.appliancelist.lighting = {total_kwh:0, total_fuel_kwh:0, monthly_kwh:[], gains_W_monthly:[]}
@@ -2092,7 +2124,7 @@ calc.appliancelist = function (data) {
             // already in final format
         }
         
-        item.fuel_input = item.kwhy / item.efficiency;
+        item.fuel_input = item.kwhy / (item.efficiency/100.0);
         data.appliancelist[category].total_kwh += item.kwhy;
         data.appliancelist[category].total_fuel_kwh += item.fuel_input;
     }
@@ -2135,7 +2167,7 @@ calc.appliancelist = function (data) {
                 f_requirements[item.category][item.fuel] = {demand: 0, fraction: 0, fuel: item.fuel, system_efficiency: item.efficiency, fuel_input: 0};
             f_requirements[item.category][item.fuel].demand += item.kwhy
             f_requirements[item.category][item.fuel].fuel_input += item.fuel_input
-            fuel_input_total[item.category] += item.fuel
+            fuel_input_total[item.category] += item.fuel_input
         });
         // Add fractions
         for (category in {appliances: {}, cooking: {}, lighting: {}}) {
@@ -2402,7 +2434,7 @@ calc.fans_and_pumps_and_combi_keep_hot = function (data) {
     // From heating systems (Central heating pump, fans and supply pumps, keep hot facility
     data.heating_systems.forEach(function (system) {
         annual_energy += 1.0 * system.central_heating_pump;
-        if (system.category != 'Warm air system')
+        if (!system.warm_air_system)
             annual_energy += 1.0 * system.fans_and_supply_pumps;
         else
             annual_energy += 0.4 * system.sfp * data.volume;
@@ -2432,7 +2464,7 @@ calc.fans_and_pumps_and_combi_keep_hot = function (data) {
             ventilation_type = 'b'; // Balanced mechanical ventilation without heat recovery (MV)
             break;
         case 'MVHR':
-            ventilation_type = 'a'; //Balanced mechanical ventilation with heat recovery (MVHR)
+            ventilation_type = 'a'; // Balanced mechanical ventilation with heat recovery (MVHR)
             break;
         default:
             data.ventilation.ventilation_type = 'NV';
@@ -2461,14 +2493,15 @@ calc.fans_and_pumps_and_combi_keep_hot = function (data) {
     }
 
 // From Solar Hot Water
-    if (data.use_SHW == 1) {
-        if (data.SHW.pump != undefined && data.SHW.pump == 'electric')
+    if (data.water_heating.solar_water_heating) {
+        if (data.SHW.pump != undefined && data.SHW.pump == 'electric') {
             annual_energy += 50;
+        }
     }
 
     // Energy and fuel requirements
-    for (m = 0; m < 12; m++)
-        monthly_energy[m] = annual_energy / 12;
+    for (m = 0; m < 12; m++) monthly_energy[m] = annual_energy / 12;
+    
     if (annual_energy > 0) {
         data.energy_requirements.fans_and_pumps = {name: "Fans and pumps", quantity: annual_energy, monthly: monthly_energy};
 
@@ -2530,7 +2563,7 @@ calc.metabolic_losses_fans_and_pumps_gains = function (data) {
 
     // From heating systems
     data.heating_systems.forEach(function (system) {
-        if (system.category == 'Warm air system') {
+        if (system.warm_air_system) {
             monthly_heat_gains += 1.0 * system.sfp * 0.04 * data.volume;
         }
         else if (system.central_heating_pump_inside != undefined && system.central_heating_pump_inside !== false) {
