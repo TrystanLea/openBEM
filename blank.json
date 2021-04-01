@@ -1,0 +1,131 @@
+{
+    "region": 13,
+    "altitude": 0,
+    "floors": [
+    ],
+    "use_custom_occupancy": 0,
+    "custom_occupancy": 0,
+    "fabric": {
+        "thermal_bridging_yvalue": 0.15,
+        "global_TMP": 1,
+        "global_TMP_value": 450,
+        "elements": [
+          
+        ]
+    },
+    "ventilation": {
+        "ventilation_type": "NV",
+        "dwelling_construction": "masonry",
+        "suspended_wooden_floor": 0,
+        "draught_lobby": 1,
+        "percentage_draught_proofed": 75,
+        "number_of_sides_sheltered": 3,
+        "air_permeability_test": false,
+        "air_permeability_value": 0,
+        "system_air_change_rate":0,
+        "balanced_heat_recovery_efficiency":0,
+        "system_specific_fan_power":3,
+        "IVF": [
+        ],
+        "EVP": [
+        ]
+    },
+    "temperature": {
+        "target":20,
+        "living_area":24.4,
+        "hours_off": {"weekday": [7, 8], "weekend": [8]}
+    },
+    "space_heating": {
+        "use_utilfactor_forgains":true,
+        "heating_off_summer":true
+    },
+    "heating_systems": [
+    ],
+    "fuels": {
+        "Standard Tariff": {
+            "category": "Electricity", 
+            "standingcharge": 66, 
+            "fuelcost": 9.8, 
+            "co2factor": 0.185, 
+            "primaryenergyfactor": 1.5
+        },
+        "generation": {
+            "category": "Electricity", 
+            "standingcharge": 0, 
+            "fuelcost": 12.0, 
+            "co2factor": 0.100, 
+            "primaryenergyfactor": 1.3
+        }
+    },
+    
+    "LAC_calculation_type":"SAP",
+    "LAC": {
+        "L": 1,
+        "LLE": 1,
+        "reduced_heat_gains_lighting": true,
+        "energy_efficient_appliances": true,
+        "energy_efficient_cooking": true,
+        "fuels_lighting": [{"fuel": "Standard Tariff", "fraction": 1}],
+        "fuels_cooking": [{"fuel": "Standard Tariff", "fraction": 1}],
+        "fuels_appliances": [{"fuel": "Standard Tariff", "fraction": 1}]
+    },
+    "appliancelist": {
+        "list": [
+        ]
+    },
+    "SHW": {
+        "A": 0.0,
+        "a1": 2.772,
+        "a2": 0.009,
+        "n0": 0.599,
+        "orientation": 4,
+        "inclination": 35,
+        "overshading": 1.0,
+        "combined_cylinder_volume":168,
+        "Vs": 60,
+        "pump":"electric"
+    },
+    "water_heating": {
+        "override_annual_energy_content":false,
+        "annual_energy_content":0,
+        "low_water_use_design":false,
+        "hot_water_control_type": "Cylinder thermostat, water heating separately timed",
+        "pipework_insulation": "Fully insulated primary pipework",
+        "storage_type": {
+            "declared_loss_factor_known": false,
+            "manufacturer_loss_factor": 0,
+            "temperature_factor_a":0,
+            "storage_volume":160,
+            "loss_factor_b":0.0181,
+            "volume_factor_b":0.908,
+            "temperature_factor_b":0.6
+        },
+        "contains_dedicated_solar_storage_or_WWHRSs": 0,
+        "solar_water_heating": false,
+        "hot_water_store_in_dwelling": true,
+        "community_heating": false
+    },
+    "use_generation":0,
+    "generation": {
+        "use_PV_calculator":true,
+        "solarpv_kwp_installed":4.0,
+        "solarpv_orientation": 4, 
+        "solarpv_inclination": 35,
+        "solarpv_overshading": 1,
+        
+        "solar_annual_kwh":0,
+        "solar_fraction_used_onsite":0.5,
+        "solar_FIT":0,
+        "solar_export_FIT":0,
+
+        "wind_annual_kwh":0,
+        "wind_fraction_used_onsite":0.5,
+        "wind_FIT":0,
+        "wind_export_FIT":0,
+
+        "hydro_annual_kwh":0,
+        "hydro_fraction_used_onsite":0.5,
+        "hydro_FIT":0,
+        "hydro_export_FIT":0
+    }
+}
