@@ -182,22 +182,22 @@ calc.floors = function (data) {
  //  - data.occupancy
  //--------------------------------------------------------------------------------------------*/
 
-calc.occupancy = function (data)
-{        
-    // SAP based occupancy calculation
+calc.occupancy = function (data) {
+    if (data.use_custom_occupancy == undefined) {
+        data.use_custom_occupancy = false;
+    }
+    if (data.custom_occupancy == undefined) {
+        data.custom_occupancy = 1;
+    }
     if (data.TFA > 13.9) {
         data.sap_occupancy = 1 + 1.76 * (1 - Math.exp(-0.000349 * Math.pow((data.TFA - 13.9), 2))) + 0.0013 * (data.TFA - 13.9);
     } else {
         data.sap_occupancy = 1;
     }
-    
     data.occupancy = data.sap_occupancy
-    
-    // Option to override with custom occupancy input
-    if (data.use_custom_occupancy!=undefined && data.use_custom_occupancy) {
-        if (data.custom_occupancy!=undefined) {
-            data.occupancy = data.custom_occupancy;
-        }
+
+    if (data.use_custom_occupancy) {
+        data.occupancy = data.custom_occupancy;
     }
 
     return data;
@@ -320,8 +320,7 @@ calc.fabric = function (data, solar_acces_factor) {
         }
     }
     
-    for (z in data.fabric.elements)
-    {
+    for (z in data.fabric.elements) {
         data.fabric.elements[z].type = data.fabric.elements[z].type.toLowerCase();
         
         // Calculate heat loss through elements
@@ -334,10 +333,10 @@ calc.fabric = function (data, solar_acces_factor) {
         if (['window','door','roof_light','hatch'].includes(data.fabric.elements[z].type)==false) {
             data.fabric.elements[z].windowarea = 0;
         }
- 
+
         // Subtract window areas:
-        for (w in data.fabric.elements)
-        {
+
+        for (w in data.fabric.elements) {
             if (['window','door','roof_light','hatch'].includes(data.fabric.elements[w].type.toLowerCase())) {
                 if (data.fabric.elements[w].subtractfrom != undefined && data.fabric.elements[w].subtractfrom == data.fabric.elements[z].id)
                 {
@@ -355,13 +354,15 @@ calc.fabric = function (data, solar_acces_factor) {
             // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
             data.fabric.elements[z].wk = data.fabric.elements[z].netarea * (1 / (1 / data.fabric.elements[z].uvalue + 0.04)); 
         } else {
+            // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
             data.fabric.elements[z].wk = data.fabric.elements[z].netarea * data.fabric.elements[z].uvalue;
         }
         data.fabric.total_heat_loss_WK += data.fabric.elements[z].wk;
-        
         // By checking that the u-value is not 0 = internal walls we can calculate total external area
         if (data.fabric.elements[z].uvalue != 0 && data.fabric.elements[z].type != 'party_wall') {
-            if (data.fabric.elements[z].netarea == undefined) data.fabric.elements[z].netarea = 0;
+            if (data.fabric.elements[z].netarea == undefined) {
+                data.fabric.elements[z].netarea = 0;
+            }
             data.fabric.total_external_area += data.fabric.elements[z].netarea;
         }
 
@@ -404,14 +405,15 @@ calc.fabric = function (data, solar_acces_factor) {
             var gain = 0;
             // The gains for a given window are calculated for each month
             // the result of which needs to be put in a bin for totals for jan, feb etc..
-            for (var month = 0; month < 12; month++)
-            {
+            for (var month = 0; month < 12; month++) {
                 // access factor is time of year dependent
                 // Summer months: 5:June, 6:July, 7:August and 8:September (where jan = month 0)
                 var summer = 0;
-                if (solar_acces_factor == 'summer' && month >= 5 && month <= 8) // solar gains for heating only use 'Winter access factor', while the summer one is used for the calculatin of "Solar gains for cooling and Summer temperatures", table 6d, p. 216 SAP2012
+                // solar gains for heating only use 'Winter access factor', while the summer one is used for the calculatin of "Solar gains for cooling and Summer temperatures", table 6d, p. 216 SAP2012
+                if (solar_acces_factor == 'summer' && month >= 5 && month <= 8) {
                     summer = 1;
-                // According to SAP2012 (p,26 note2) a solar access factor of 1.0 [...] should be used for roof lights, but we think that is not right (see issue 237: https://github.com/emoncms/MyHomeEnergyPlanner/issues/237 
+                }
+                // According to SAP2012 (p,26 note2) a solar access factor of 1.0 [...] should be used for roof lights, but we think that is not right (see issue 237: https://github.com/emoncms/MyHomeEnergyPlanner/issues/237
                 /*if (data.fabric.elements[z].type == 'Roof_light')
                  var access_factor = 1.0;
                  else*/
@@ -2170,9 +2172,9 @@ calc.applianceCarbonCoop = function (data) {
 
 calc.appliancelist = function (data) {
 
-    if (data.appliancelist == undefined)
+    if (data.appliancelist == undefined) {
         data.appliancelist = {list: [{name: "LED Light", power: 6, hours: 12, kwhd: 0, kwhy:0, category: 'lighting', fuel: 'Standard Tariff', efficiency: 100}]};
-        
+    }
     
     data.appliancelist.lighting = {total_kwh:0, total_fuel_kwh:0, monthly_kwh:[], gains_W_monthly:[]}
     data.appliancelist.cooking = {total_kwh:0, total_fuel_kwh:0, monthly_kwh:[], gains_W_monthly:[]}
@@ -2232,8 +2234,9 @@ calc.appliancelist = function (data) {
         var f_requirements = {'lighting': {}, 'appliances': {}, 'cooking': {}};
         var fuel_input_total = {'lighting': 0, 'appliances': 0, 'cooking': 0};
         data.appliancelist.list.forEach(function (item) {
-            if (f_requirements[item.category][item.fuel] == undefined)
+            if (f_requirements[item.category][item.fuel] == undefined) {
                 f_requirements[item.category][item.fuel] = {demand: 0, fraction: 0, fuel: item.fuel, system_efficiency: item.efficiency, fuel_input: 0};
+            }
             f_requirements[item.category][item.fuel].demand += item.kwhy
             f_requirements[item.category][item.fuel].fuel_input += item.fuel_input
             fuel_input_total[item.category] += item.fuel_input
@@ -2259,8 +2262,8 @@ calc.appliancelist = function (data) {
 /*---------------------------------------------------------------------------------------------
  // generation
  // Calculates total generation, CO2, primary energy and income from renewables
- //	
- //	// Inputs from user: 
+ //
+ //	// Inputs from user:
  //	- data.generation.use_PV_calculator
  //      - data.generation.solar_annual_kwh
  //      - data.generation.solar_fraction_used_onsite
@@ -2479,6 +2482,9 @@ calc.currentenergy = function (data) {
     data.currentenergy.total_co2m2 = total_co2 / data.TFA;
     data.currentenergy.total_costm2 = total_cost / data.TFA;
     data.currentenergy.energyuseperperson = (enduse_annual_kwh / 365.0) / data.occupancy;
+    data.currentenergy.enduse_annual_kwh = enduse_annual_kwh;
+    data.currentenergy.enduse_annual_kwhm2 = enduse_annual_kwh / data.TFA;
+
     return data;
 };
 
