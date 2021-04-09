@@ -17,7 +17,7 @@
     "custom_occupancy": 2,
     "fabric": {
         "thermal_bridging_yvalue": 0.15,
-        "global_TMP": 1,
+        "global_TMP": 0,
         "global_TMP_value": 450,
         
         "library": {
@@ -69,7 +69,7 @@
         ]
     },
     "ventilation": {
-        "ventilation_type": "NV",
+        "ventilation_type": "IE",
         "dwelling_construction": "masonry",
         "suspended_wooden_floor": 0,
         "draught_lobby": 1,
@@ -112,7 +112,7 @@
             "fraction_space": 1.0,
             "summer_efficiency": 380,
             "winter_efficiency": 420,
-            "fuel": "Standard Tariff",
+            "fuel": "Electricity",
             "responsiveness":1,
             "heating_controls":2,
             "temperature_adjustment":0,
@@ -126,19 +126,11 @@
         }
     ],
     "fuels": {
-        "Standard Tariff": {
-            "category": "Electricity", 
+        "Electricity": {
             "standingcharge": 76.65, 
             "fuelcost": 10.9, 
             "co2factor": 0.192, 
             "primaryenergyfactor": 1.47
-        },
-        "generation": {
-            "category": "Electricity", 
-            "standingcharge": 0, 
-            "fuelcost": 12.0, 
-            "co2factor": 0.100, 
-            "primaryenergyfactor": 1.3
         }
     },
     
@@ -149,27 +141,27 @@
         "reduced_heat_gains_lighting": true,
         "energy_efficient_appliances": true,
         "energy_efficient_cooking": true,
-        "fuels_lighting": [{"fuel": "Standard Tariff", "fraction": 1}],
-        "fuels_cooking": [{"fuel": "Standard Tariff", "fraction": 1}],
-        "fuels_appliances": [{"fuel": "Standard Tariff", "fraction": 1}]
+        "fuels_lighting": [{"fuel": "Electricity", "fraction": 1}],
+        "fuels_cooking": [{"fuel": "Electricity", "fraction": 1}],
+        "fuels_appliances": [{"fuel": "Electricity", "fraction": 1}]
     },
     "appliancelist": {
         "list": [
-            { "category": "lighting", "name": "Livingroom", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "lighting", "name": "Diningroom", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "lighting", "name": "Kitchen", "power": 24, "hours": 4, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "lighting", "name": "Bathroom", "power": 24, "hours": 3, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },    
-            { "category": "lighting", "name": "Bed 1", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "lighting", "name": "Bed 2", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "lighting", "name": "Study", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "cooking", "name": "Cooker", "power": 900, "hours": 2, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "cooking", "name": "Kettle", "power": 2800, "hours": 0.16, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "cooking", "name": "Microwave", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 72, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "cooking", "name": "Bread maker", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 9.5, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "appliances", "name": "Laptop 1", "power": 20, "hours": 12, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "appliances", "name": "Laptop 2", "power": 25, "hours": 5, "kwhd": 0, "kwhy": 0, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "appliances", "name": "Washing Machine", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 192, "fuel": "Standard Tariff", "efficiency": 100 },
-            { "category": "appliances", "name": "Fridge Freezer", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 208, "fuel": "Standard Tariff", "efficiency": 100 }
+            { "category": "lighting", "name": "Livingroom", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "lighting", "name": "Diningroom", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "lighting", "name": "Kitchen", "power": 24, "hours": 4, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "lighting", "name": "Bathroom", "power": 24, "hours": 3, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },    
+            { "category": "lighting", "name": "Bed 1", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "lighting", "name": "Bed 2", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "lighting", "name": "Study", "power": 6, "hours": 8, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "cooking", "name": "Cooker", "power": 900, "hours": 2, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "cooking", "name": "Kettle", "power": 2800, "hours": 0.16, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "cooking", "name": "Microwave", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 72, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "cooking", "name": "Bread maker", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 9.5, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "appliances", "name": "Laptop 1", "power": 20, "hours": 12, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "appliances", "name": "Laptop 2", "power": 25, "hours": 5, "kwhd": 0, "kwhy": 0, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "appliances", "name": "Washing Machine", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 192, "fuel": "Electricity", "efficiency": 100 },
+            { "category": "appliances", "name": "Fridge Freezer", "power": 0, "hours": 0, "kwhd": 0, "kwhy": 208, "fuel": "Electricity", "efficiency": 100 }
         ]
     },
     "SHW": {
@@ -204,9 +196,8 @@
         "hot_water_store_in_dwelling": true,
         "community_heating": false
     },
-    "use_generation":0,
     "generation": {
-        "use_PV_calculator":true,
+        "use_PV_calculator":false,
         "solarpv_kwp_installed":4.0,
         "solarpv_orientation": 4, 
         "solarpv_inclination": 35,

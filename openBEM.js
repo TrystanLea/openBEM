@@ -1245,11 +1245,8 @@ calc.heating_systems = function (data) {
 
 /*---------------------------------------------------------------------------------------------
  // FUEL REQUIREMENTS
- // Calculates the totals for each type of fuel (Mains Gas, Standard Tariff, etc) from
+ // Calculates the totals for each type of fuel (Mains Gas, Electricity, etc) from
  // the fuel requirements (appliances, cooking, space_heating, etc)
- //
- // Inputs from user:
- //      -  data.use_generation
  //
  // Inputs from other modules:
  //      - data.fuel_requirements
@@ -1300,7 +1297,7 @@ calc.fuel_requirements = function (data) {
     }
     data.energy_delivered = data.energy_use;
     // Annual CO2, primary energy and cost saved due to generation. Be aware generation is not used for the calculation of Energy use
-    if (data.use_generation == 1) {
+    if (data.generation.total_generation>0) {
         data.fuel_totals['generation'] = {
             name: 'generation',
             quantity: -data.generation.total_generation,
@@ -1312,9 +1309,12 @@ calc.fuel_requirements = function (data) {
         data.annualco2 += data.fuel_totals['generation'].annualco2;
         data.total_cost += data.fuel_totals['generation'].annualcost;
         data.energy_delivered += data.fuel_totals['generation'].quantity;
+        
+        data.net_cost = data.total_cost - data.total_income
+    } else {
+        data.net_cost = data.total_cost
     }
 
-    data.net_cost = data.use_generation == 1 ? data.total_cost - data.total_income : data.total_cost;
     return data;
 };
 
@@ -1466,13 +1466,13 @@ calc.LAC_SAP = function (data) {
         data.LAC.reduced_heat_gains_lighting = false;
     }
     if (data.LAC.fuels_lighting == undefined) {
-        data.LAC.fuels_lighting = [{fuel: 'Standard Tariff', fraction: 1}];
+        data.LAC.fuels_lighting = [{fuel: 'Electricity', fraction: 1}];
     }
     if (data.LAC.fuels_cooking == undefined) {
-        data.LAC.fuels_cooking = [{fuel: 'Standard Tariff', fraction: 1}];
+        data.LAC.fuels_cooking = [{fuel: 'Electricity', fraction: 1}];
     }
     if (data.LAC.fuels_appliances == undefined) {
-        data.LAC.fuels_appliances = [{fuel: 'Standard Tariff', fraction: 1}];
+        data.LAC.fuels_appliances = [{fuel: 'Electricity', fraction: 1}];
     }
     /*  LIGHTING     */
     // average annual energy consumption for lighting if no low-energy lighting is used is:
@@ -1515,7 +1515,7 @@ calc.LAC_SAP = function (data) {
 
         /*   if (data.fuel_requirements.lighting == undefined) {
          data.fuel_requirements.lighting = [];
-         data.fuel_requirements.lighting[0] = {fuel: 'Standard Tariff', fraction: 1, fuel_input: 0, sytem_efficiency: 1};
+         data.fuel_requirements.lighting[0] = {fuel: 'Electricity', fraction: 1, fuel_input: 0, sytem_efficiency: 1};
          }*/
     }
 
@@ -1572,9 +1572,9 @@ calc.LAC_SAP = function (data) {
     // CO2 emissions in kg/m2/year associated with cooking
     var cooking_CO2 = (119 + 24 * data.occupancy) / data.TFA;
 
-    // This results in very high cooking energy use if co2factor of Standard Tariff is very low...
-    // if (data.fuels['Standard Tariff'] !== undefined) {
-    //     data.LAC.EC = cooking_CO2 * data.TFA / data.fuels['Standard Tariff'].co2factor; // We stimate the clculation of annual energy use from the emissions
+    // This results in very high cooking energy use if co2factor of Electricity is very low...
+    // if (data.fuels['Electricity'] !== undefined) {
+    //     data.LAC.EC = cooking_CO2 * data.TFA / data.fuels['Electricity'].co2factor; // We stimate the clculation of annual energy use from the emissions
     // }
     
     // We stimate the clculation of annual energy use from the emissions
@@ -2141,7 +2141,7 @@ calc.applianceCarbonCoop = function (data) {
  // Alternative method to calculate heat gains, energy requirements, CO2 emissions and fuel requirements for LAC
  //
  // Inputs from user:
- //      - data.appliancelist.list: [{name: "LED Light", power: 6, hours: 12, category: 'lighting', fuel: 'Standard Tariff', efficiency: 1}]
+ //      - data.appliancelist.list: [{name: "LED Light", power: 6, hours: 12, category: 'lighting', fuel: 'Electricity', efficiency: 1}]
  //
  // Global Outputs:
  //	- data.energy_requirements
@@ -2173,7 +2173,7 @@ calc.applianceCarbonCoop = function (data) {
 calc.appliancelist = function (data) {
 
     if (data.appliancelist == undefined) {
-        data.appliancelist = {list: [{name: "LED Light", power: 6, hours: 12, kwhd: 0, kwhy:0, category: 'lighting', fuel: 'Standard Tariff', efficiency: 100}]};
+        data.appliancelist = {list: [{name: "LED Light", power: 6, hours: 12, kwhd: 0, kwhy:0, category: 'lighting', fuel: 'Electricity', efficiency: 100}]};
     }
     
     data.appliancelist.lighting = {total_kwh:0, total_fuel_kwh:0, monthly_kwh:[], gains_W_monthly:[]}
@@ -2349,6 +2349,11 @@ calc.generation = function (data) {
         data.generation.solar_annual_kwh = 0.8 * kWp * annual_solar_radiation * overshading_factor;
     }
     // ----------
+    if (data.fuels['generation']==undefined) {
+        if (data.generation.solar_annual_kwh>0 || data.generation.wind_annual_kwh>0 || data.generation.hydro_annual_kwh>0) {
+            data.fuels['generation'] = {standingcharge: 0, fuelcost: 12.0, co2factor: 0.100, primaryenergyfactor: 1.3 }
+        }
+    }
 
     data.generation.total_energy_income = 0;
     data.generation.systems = {};
@@ -2589,7 +2594,7 @@ calc.fans_and_pumps_and_combi_keep_hot = function (data) {
         data.energy_requirements.fans_and_pumps = {name: 'Fans and pumps', quantity: annual_energy, monthly: monthly_energy};
 
         if (data.fans_and_pumps == undefined) {
-            data.fans_and_pumps = [{fuel: 'Standard Tariff', fraction: 1}];
+            data.fans_and_pumps = [{fuel: 'Electricity', fraction: 1}];
         }
 
         data.fuel_requirements.fans_and_pumps.quantity = 0;
