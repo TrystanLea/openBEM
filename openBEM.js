@@ -394,6 +394,9 @@ calc.fabric = function (data, solar_acces_factor) {
 
         if (['window','door','roof_light'].includes(data.fabric.elements[z].type))
         {
+            if (data.fabric.elements[z]['orientation']==undefined) data.fabric.elements[z]['orientation'] = 4;
+            if (data.fabric.elements[z]['overshading']==undefined) data.fabric.elements[z]['overshading'] = 3;
+            
             var orientation = data.fabric.elements[z]['orientation'] != '' ? data.fabric.elements[z]['orientation'] : 0; // For a reason that i haven't been able to find when it is zero, orientation = data.fabric.elements[z]['orientation'] becomes an empty string
             //var orientation = data.fabric.elements[z]['orientation'];
             var area = data.fabric.elements[z]['area'];
