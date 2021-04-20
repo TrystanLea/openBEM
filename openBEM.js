@@ -796,6 +796,13 @@ calc.temperature = function (data) {
     if (data.temperature.hours_off == undefined) {
         data.temperature.hours_off = {weekday: [7, 8], weekend: [8]};
     }
+    if (data.use_custom_external_temperature == undefined) {
+        data.use_custom_external_temperature = false
+    }
+    if (data.use_custom_internal_temperature == undefined) {
+        data.use_custom_internal_temperature = false
+    }   
+    
 
     // Get Main heating systems
     var mainHSs = {}; // It will take the form of: mainHSs = {mainHS1: systemObject, mainHS2: systemObject}
@@ -945,6 +952,13 @@ calc.temperature = function (data) {
     data.mean_internal_temperature.m_i_t_whole_dwelling = JSON.parse(JSON.stringify(data.internal_temperature));
     data.external_temperature = Te;
 
+    if (data.use_custom_external_temperature) {
+        if (data.custom_external_temperature==undefined) {
+            data.custom_external_temperature = JSON.parse(JSON.stringify(data.external_temperature))
+        }
+        data.external_temperature = data.custom_external_temperature
+    }
+
     // Temperature adjustment
     // if there is only one main system
     if (mainHSs.mainHS1 != undefined && mainHSs.mainHS2 == undefined) {
@@ -961,6 +975,14 @@ calc.temperature = function (data) {
     for (var m = 0; m < 12; m++) {
         data.internal_temperature[m] = data.internal_temperature[m] + data.temperature.temperature_adjustment;
     }
+
+    if (data.use_custom_internal_temperature) {
+        if (data.custom_internal_temperature==undefined) {
+            data.custom_internal_temperature = JSON.parse(JSON.stringify(data.internal_temperature))
+        }
+        data.internal_temperature = data.custom_internal_temperature
+    }
+    
     data.mean_internal_temperature.m_i_t_whole_dwelling_adjusted = data.internal_temperature;
     
     // Calculate annual average temperatures for UI
@@ -969,8 +991,8 @@ calc.temperature = function (data) {
     data.annual_external_temperature = 0
     for (var m = 0; m < 12; m++) {
         data.annual_m_i_t_living_area += data.mean_internal_temperature.m_i_t_living_area[m]
-        data.annual_internal_temperature += data.internal_temperature[m]
-        data.annual_external_temperature += data.external_temperature[m]
+        data.annual_internal_temperature += 1*data.internal_temperature[m]
+        data.annual_external_temperature += 1*data.external_temperature[m]
     } 
     data.annual_m_i_t_living_area /= 12
     data.annual_internal_temperature /= 12
