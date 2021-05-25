@@ -957,6 +957,8 @@ calc.temperature = function (data) {
             data.custom_external_temperature = JSON.parse(JSON.stringify(data.external_temperature))
         }
         data.external_temperature = data.custom_external_temperature
+    } else {
+        data.custom_external_temperature = JSON.parse(JSON.stringify(data.external_temperature))
     }
 
     // Temperature adjustment
