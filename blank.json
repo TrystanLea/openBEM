@@ -42,7 +42,7 @@
     "heating_systems": [
     ],
     "fuels": {
-        "Standard Tariff": {
+        "Electricity": {
             "category": "Electricity", 
             "standingcharge": 66, 
             "fuelcost": 9.8, 
@@ -65,9 +65,9 @@
         "reduced_heat_gains_lighting": true,
         "energy_efficient_appliances": true,
         "energy_efficient_cooking": true,
-        "fuels_lighting": [{"fuel": "Standard Tariff", "fraction": 1}],
-        "fuels_cooking": [{"fuel": "Standard Tariff", "fraction": 1}],
-        "fuels_appliances": [{"fuel": "Standard Tariff", "fraction": 1}]
+        "fuels_lighting": [{"fuel": "Electricity", "fraction": 1}],
+        "fuels_cooking": [{"fuel": "Electricity", "fraction": 1}],
+        "fuels_appliances": [{"fuel": "Electricity", "fraction": 1}]
     },
     "appliancelist": {
         "list": [
