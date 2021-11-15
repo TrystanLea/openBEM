@@ -48,13 +48,6 @@
             "fuelcost": 9.8, 
             "co2factor": 0.185, 
             "primaryenergyfactor": 1.5
-        },
-        "generation": {
-            "category": "Electricity", 
-            "standingcharge": 0, 
-            "fuelcost": 12.0, 
-            "co2factor": 0.100, 
-            "primaryenergyfactor": 1.3
         }
     },
     
@@ -107,8 +100,8 @@
     },
     "use_generation":0,
     "generation": {
-        "use_PV_calculator":true,
-        "solarpv_kwp_installed":4.0,
+        "use_PV_calculator":false,
+        "solarpv_kwp_installed":0.0,
         "solarpv_orientation": 4, 
         "solarpv_inclination": 35,
         "solarpv_overshading": 1,
