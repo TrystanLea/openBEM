@@ -2890,7 +2890,7 @@ function annual_solar_rad(region, orient, p) {
     return 0.024 * sum;
 }
 
-
+// This function is no longer actually used anywhere...
 function calc_solar_gains_from_windows(windows, region) {
     var gains = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (z in windows) {
