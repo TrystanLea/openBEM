@@ -256,7 +256,7 @@ calc.occupancy = function (data) {
  //
  //---------------------------------------------------------------------------------------------*/
 
-calc.fabric = function (data, solar_acces_factor) {
+calc.fabric = function (data, solar_access_factor) {
     if (data.fabric.library==undefined) {
         data.fabric.library = {}
     }
@@ -275,11 +275,10 @@ calc.fabric = function (data, solar_acces_factor) {
     if (data.fabric.global_TMP_value == undefined) {
         data.fabric.global_TMP_value = 250;
     } // medium
-    if (solar_acces_factor == undefined) {
-        solar_acces_factor = 'winter';
+    if (solar_access_factor == undefined) {
+        solar_access_factor = 'winter';
     } // solar gains for heating only use 'Winter access factor', while the summer one is used for the calculatin of "Solar gains for cooling and Summer temperatures", table 6d, p. 216 SAP2012
     data.fabric_total_heat_loss_WK = 0;
-    data.fabric.total_heat_loss_WK = 0;
     data.fabric.total_thermal_capacity = 0;
     data.fabric.total_floor_WK = 0;
     data.fabric.total_wall_WK = 0;
@@ -296,14 +295,6 @@ calc.fabric = function (data, solar_acces_factor) {
     // Solar gains
     var sum = 0; // lighting gains
     var gains = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Solar gains
-    /*var gains_by_orientation = {
-     0:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     1:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     2:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     3:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     4:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     5:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-     };*/
     
     // Apply element properties from library
     if (data.fabric.library!=undefined) {
@@ -351,7 +342,6 @@ calc.fabric = function (data, solar_acces_factor) {
             // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
             data.fabric.elements[z].wk = data.fabric.elements[z].netarea * (1 / (1 / data.fabric.elements[z].uvalue + 0.04)); 
         } else {
-            // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
             data.fabric.elements[z].wk = data.fabric.elements[z].netarea * data.fabric.elements[z].uvalue;
         }
         data.fabric.total_heat_loss_WK += data.fabric.elements[z].wk;
@@ -395,10 +385,9 @@ calc.fabric = function (data, solar_acces_factor) {
             if (data.fabric.elements[z]['overshading']==undefined) data.fabric.elements[z]['overshading'] = 3;
             
             var orientation = data.fabric.elements[z]['orientation'] != '' ? data.fabric.elements[z]['orientation'] : 0; // For a reason that i haven't been able to find when it is zero, orientation = data.fabric.elements[z]['orientation'] becomes an empty string
-            //var orientation = data.fabric.elements[z]['orientation'];
             var area = data.fabric.elements[z]['area'];
             var overshading = data.fabric.elements[z]['overshading'] != '' ? data.fabric.elements[z]['overshading'] : 0; // For a reason that i haven't been able to find when it is zero, orientation = data.fabric.elements[z]['overshading'] becomes an empty string
-            //var overshading = data.fabric.elements[z]['overshading'];
+
             var g = data.fabric.elements[z]['g'];
             var gL = data.fabric.elements[z]['gL'];
             var ff = data.fabric.elements[z]['ff'];
@@ -410,7 +399,7 @@ calc.fabric = function (data, solar_acces_factor) {
                 // Summer months: 5:June, 6:July, 7:August and 8:September (where jan = month 0)
                 var summer = 0;
                 // solar gains for heating only use 'Winter access factor', while the summer one is used for the calculatin of "Solar gains for cooling and Summer temperatures", table 6d, p. 216 SAP2012
-                if (solar_acces_factor == 'summer' && month >= 5 && month <= 8) {
+                if (solar_access_factor == 'summer' && month >= 5 && month <= 8) {
                     summer = 1;
                 }
                 // According to SAP2012 (p,26 note2) a solar access factor of 1.0 [...] should be used for roof lights, but we think that is not right (see issue 237: https://github.com/emoncms/MyHomeEnergyPlanner/issues/237
