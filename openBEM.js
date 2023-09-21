@@ -88,9 +88,6 @@ calc.start = function (data) {
     if (data.region == undefined) {
         data.region = 0;
     }
-    if (data.altitude == undefined) {
-        data.altitude = 0;
-    }
     if (data.LAC_calculation_type == undefined) {
         data.LAC_calculation_type = 'SAP';
     }
@@ -748,7 +745,6 @@ calc.ventilation = function (data) {
  //      - data.TMP
  //      - data.losses_WK
  //      - data.gains_W
- //      - data.altitude
  //      - data.region
  //	- data.heating_systems
  //	- data.temperature.hours_off
@@ -865,21 +861,18 @@ calc.temperature = function (data) {
         }
     }
 
-    var Te = [];
-    for (var m = 0; m < 12; m++) {
-        //Te[m] = datasets.table_u1[data.region][m] - (0.3 * data.altitude / 50);
-        Te[m] = datasets.table_u1[data.region][m];
-    }
-
     //----------------------------------------------------------------------------------------------------------------
     // 7. Mean internal temperature (heating season)
     //----------------------------------------------------------------------------------------------------------------
 
     // Bring calculation of (96)m forward as its used in section 7.
     // Monthly average external temperature from Table U1
-    // for (var i=1; i<13; i++) data['96-'+i] = table_u1[i.region][i-1]-(0.3 * i.altitude / 50);
 
-    // See utilisationfactor.js for calculation
+    var Te = [];
+    for (var m = 0; m < 12; m++) {
+        Te[m] = datasets.table_u1[data.region][m];
+    }
+
     // Calculation is described on page 159 of SAP document
     // Would be interesting to understand how utilisation factor equation
     // can be derived
