@@ -589,6 +589,8 @@ calc.ventilation = function (data) {
     // Structural infiltration from test
     //data.ventilation.structural_infiltration_from_test = data.ventilation.air_permeability_value / 20.0; // This is the formula used in SAP, but it is wrong the units here are "m3/h/m2 of envelope area" but should be ACH
     var m3m2Ea_to_ACH_coefficient = (data.fabric.total_external_area + data.fabric.total_party_wall_area) / data.volume; // = Envelope area / dwelling volume
+    
+    // structural_infiltration_from_test units ACH/hr
     data.ventilation.structural_infiltration_from_test = m3m2Ea_to_ACH_coefficient * data.ventilation.air_permeability_value / 20.0;
     if (data.ventilation.air_permeability_test == false) {
         infiltration += data.ventilation.structural_infiltration;
@@ -597,15 +599,18 @@ calc.ventilation = function (data) {
     }
     data.ventilation.infiltration_rate = infiltration;
     data.ventilation.EVP_air_changes = EVP_air_changes;
-    var shelter_factor = 1 - (0.075 * data.ventilation.number_of_sides_sheltered);
-    infiltration *= shelter_factor;
-    EVP_air_changes *= shelter_factor;
+    data.ventilation.shelter_factor = 1 - (0.075 * data.ventilation.number_of_sides_sheltered);
+    infiltration *= data.ventilation.shelter_factor;
+    EVP_air_changes *= data.ventilation.shelter_factor;
     data.ventilation.infiltration_rate_incorp_shelter_factor = infiltration;
     var adjusted_infiltration = [];
     var adjusted_EVP_air_changes = [];
     data.ventilation.windfactor = [];
     data.ventilation.adjusted_infiltration = [];
     data.ventilation.adjusted_EVP_air_changes = [];
+    
+    var wind_speeds = [];
+    
     for (var m = 0; m < 12; m++) {
         var windspeed = datasets.table_u2[data.region][m];
         var windfactor = windspeed / 4;
@@ -614,6 +619,7 @@ calc.ventilation = function (data) {
         data.ventilation.windfactor[m] = windfactor;
         data.ventilation.adjusted_infiltration[m] = adjusted_infiltration[m];
         data.ventilation.adjusted_EVP_air_changes[m] = adjusted_EVP_air_changes[m];
+        wind_speeds[m] = windspeed;
     }
 
     // (24a)m effective_air_change_rate
@@ -727,6 +733,7 @@ calc.ventilation = function (data) {
     data.ventilation.average_infiltration_WK = sum_infiltration / 12.0;
     data.ventilation.average_ventilation_WK = sum_ventilation / 12.0;
     data.ventilation.effective_air_change_rate = effective_air_change_rate;
+    data.ventilation.wind_speeds = wind_speeds;
     data.ventilation.infiltration_WK = infiltration_WK;
     data.ventilation.ventilation_WK = ventilation_WK;
     data.losses_WK.ventilation = ventilation_WK;
@@ -1691,7 +1698,8 @@ calc.SHW = function (data) {
     data.SHW.annual_solar = annual_solar_rad(data.region, data.SHW.orientation, data.SHW.inclination);
     data.SHW.solar_energy_available = data.SHW.A * data.SHW.n0 * data.SHW.annual_solar * data.SHW.overshading;
     data.SHW.solar_load_ratio = data.SHW.solar_energy_available / data.water_heating.annual_energy_content;
-    data.SHW.utilisation_factor = 0;
+    data.SHW.utilisation_factor = 0;    
+    
     if (data.SHW.solar_load_ratio > 0) {
         data.SHW.utilisation_factor = 1 - Math.exp(-1 / (data.SHW.solar_load_ratio));
     }
@@ -1727,6 +1735,13 @@ calc.SHW = function (data) {
         sum += solar_rad(data.region, data.SHW.orientation, data.SHW.inclination, m);
     }
     var annualAverageSolarIrradiance = sum / 12;
+    
+    data.SHW.monthly_solar_energy_available = [];
+    for (m = 0; m < 12; m++) {
+        var fm = solar_rad(data.region, data.SHW.orientation, data.SHW.inclination, m) / annualAverageSolarIrradiance;
+        data.SHW.monthly_solar_energy_available[m] = data.SHW.solar_energy_available * fm * datasets.table_1a[m] / 365
+    }
+    
     data.SHW.Qs_monthly = [];
     for (m = 0; m < 12; m++) {
         var fm = solar_rad(data.region, data.SHW.orientation, data.SHW.inclination, m) / annualAverageSolarIrradiance;
