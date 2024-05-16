@@ -1,7 +1,6 @@
 {
   "project_name":"midterrace",
   "region": 13,
-  "altitude": 114,
   "floors": [
     {
       "name": "Ground Floor",
@@ -305,7 +304,6 @@
         "lib": "Insulated floor",
         "l": 0,
         "h": 0,
-        "perimeter": 6.8,
         "area": 24.4,
         "type": "floor",
         "uvalue": 0.38,
@@ -319,7 +317,6 @@
         "lib": "Solid floor",
         "l": 0,
         "h": 0,
-        "perimeter": 5.42,
         "area": 7.248,
         "type": "floor",
         "uvalue": 0.9,
@@ -333,7 +330,6 @@
         "lib": "Solid floor",
         "l": 0,
         "h": 0,
-        "perimeter": 7.92,
         "area": 7.92,
         "type": "floor",
         "uvalue": 0.9,

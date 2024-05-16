@@ -88,9 +88,6 @@ calc.start = function (data) {
     if (data.region == undefined) {
         data.region = 0;
     }
-    if (data.altitude == undefined) {
-        data.altitude = 0;
-    }
     if (data.LAC_calculation_type == undefined) {
         data.LAC_calculation_type = 'SAP';
     }
@@ -259,7 +256,7 @@ calc.occupancy = function (data) {
  //
  //---------------------------------------------------------------------------------------------*/
 
-calc.fabric = function (data, solar_acces_factor) {
+calc.fabric = function (data, solar_access_factor) {
     if (data.fabric.library==undefined) {
         data.fabric.library = {}
     }
@@ -278,11 +275,10 @@ calc.fabric = function (data, solar_acces_factor) {
     if (data.fabric.global_TMP_value == undefined) {
         data.fabric.global_TMP_value = 250;
     } // medium
-    if (solar_acces_factor == undefined) {
-        solar_acces_factor = 'winter';
+    if (solar_access_factor == undefined) {
+        solar_access_factor = 'winter';
     } // solar gains for heating only use 'Winter access factor', while the summer one is used for the calculatin of "Solar gains for cooling and Summer temperatures", table 6d, p. 216 SAP2012
     data.fabric_total_heat_loss_WK = 0;
-    data.fabric.total_heat_loss_WK = 0;
     data.fabric.total_thermal_capacity = 0;
     data.fabric.total_floor_WK = 0;
     data.fabric.total_wall_WK = 0;
@@ -299,14 +295,6 @@ calc.fabric = function (data, solar_acces_factor) {
     // Solar gains
     var sum = 0; // lighting gains
     var gains = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Solar gains
-    /*var gains_by_orientation = {
-     0:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     1:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     2:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     3:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     4:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     5:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-     };*/
     
     // Apply element properties from library
     if (data.fabric.library!=undefined) {
@@ -354,7 +342,6 @@ calc.fabric = function (data, solar_acces_factor) {
             // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
             data.fabric.elements[z].wk = data.fabric.elements[z].netarea * (1 / (1 / data.fabric.elements[z].uvalue + 0.04)); 
         } else {
-            // SAP assumes we are using curtains: paragraph 3.2, p. 15, SAP2012
             data.fabric.elements[z].wk = data.fabric.elements[z].netarea * data.fabric.elements[z].uvalue;
         }
         data.fabric.total_heat_loss_WK += data.fabric.elements[z].wk;
@@ -398,10 +385,9 @@ calc.fabric = function (data, solar_acces_factor) {
             if (data.fabric.elements[z]['overshading']==undefined) data.fabric.elements[z]['overshading'] = 3;
             
             var orientation = data.fabric.elements[z]['orientation'] != '' ? data.fabric.elements[z]['orientation'] : 0; // For a reason that i haven't been able to find when it is zero, orientation = data.fabric.elements[z]['orientation'] becomes an empty string
-            //var orientation = data.fabric.elements[z]['orientation'];
             var area = data.fabric.elements[z]['area'];
             var overshading = data.fabric.elements[z]['overshading'] != '' ? data.fabric.elements[z]['overshading'] : 0; // For a reason that i haven't been able to find when it is zero, orientation = data.fabric.elements[z]['overshading'] becomes an empty string
-            //var overshading = data.fabric.elements[z]['overshading'];
+
             var g = data.fabric.elements[z]['g'];
             var gL = data.fabric.elements[z]['gL'];
             var ff = data.fabric.elements[z]['ff'];
@@ -413,7 +399,7 @@ calc.fabric = function (data, solar_acces_factor) {
                 // Summer months: 5:June, 6:July, 7:August and 8:September (where jan = month 0)
                 var summer = 0;
                 // solar gains for heating only use 'Winter access factor', while the summer one is used for the calculatin of "Solar gains for cooling and Summer temperatures", table 6d, p. 216 SAP2012
-                if (solar_acces_factor == 'summer' && month >= 5 && month <= 8) {
+                if (solar_access_factor == 'summer' && month >= 5 && month <= 8) {
                     summer = 1;
                 }
                 // According to SAP2012 (p,26 note2) a solar access factor of 1.0 [...] should be used for roof lights, but we think that is not right (see issue 237: https://github.com/emoncms/MyHomeEnergyPlanner/issues/237
@@ -755,7 +741,6 @@ calc.ventilation = function (data) {
  //      - data.TMP
  //      - data.losses_WK
  //      - data.gains_W
- //      - data.altitude
  //      - data.region
  //	- data.heating_systems
  //	- data.temperature.hours_off
@@ -872,21 +857,18 @@ calc.temperature = function (data) {
         }
     }
 
-    var Te = [];
-    for (var m = 0; m < 12; m++) {
-        //Te[m] = datasets.table_u1[data.region][m] - (0.3 * data.altitude / 50);
-        Te[m] = datasets.table_u1[data.region][m];
-    }
-
     //----------------------------------------------------------------------------------------------------------------
     // 7. Mean internal temperature (heating season)
     //----------------------------------------------------------------------------------------------------------------
 
     // Bring calculation of (96)m forward as its used in section 7.
     // Monthly average external temperature from Table U1
-    // for (var i=1; i<13; i++) data['96-'+i] = table_u1[i.region][i-1]-(0.3 * i.altitude / 50);
 
-    // See utilisationfactor.js for calculation
+    var Te = [];
+    for (var m = 0; m < 12; m++) {
+        Te[m] = datasets.table_u1[data.region][m];
+    }
+
     // Calculation is described on page 159 of SAP document
     // Would be interesting to understand how utilisation factor equation
     // can be derived
@@ -2923,7 +2905,7 @@ function annual_solar_rad(region, orient, p) {
     return 0.024 * sum;
 }
 
-
+// This function is no longer actually used anywhere...
 function calc_solar_gains_from_windows(windows, region) {
     var gains = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (z in windows) {
